@@ -4,7 +4,9 @@ RUN apt-get update
 RUN apt-get install -y openssh-server rssh \
  && rm -f /etc/ssh/ssh_host_*
 
-RUN useradd --uid 1000 --shell /usr/bin/rssh data \
+RUN useradd --uid 1000 --no-create-home --shell /usr/bin/rssh data \
+ && mkdir /home/data \
+ && chown data: /home/data \
  && chmod 0700 /home/data
 
 ENV SSH_DIR	/home/data/.ssh
