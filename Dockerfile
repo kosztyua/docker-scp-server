@@ -9,11 +9,15 @@ RUN useradd --uid 1000 --no-create-home --shell /usr/bin/rssh data \
  && chown data: /home/data \
  && chmod 0700 /home/data
 
-ENV AUTHORIZED_KEYS_FILE /authorized_keys
-RUN echo "AuthorizedKeysFile $AUTHORIZED_KEYS_FILE" >>/etc/ssh/sshd_config \
- && touch $AUTHORIZED_KEYS_FILE \
- && chown data $AUTHORIZED_KEYS_FILE \
- && chmod 0600 $AUTHORIZED_KEYS_FILE
+ENV SSH_DIR	/tmp/.ssh
+ENV AUTHORIZED_KEYS_FILE authorized_keys
+RUN echo "AuthorizedKeysFile $SSH_DIR/$AUTHORIZED_KEYS_FILE" >>/etc/ssh/sshd_config \
+ && mkdir -p $SSH_DIR \
+ && chown data $SSH_DIR \
+ && chmod 0700 $SSH_DIR \
+ && touch $SSH_DIR/$AUTHORIZED_KEYS_FILE \
+ && chown data $SSH_DIR/$AUTHORIZED_KEYS_FILE \
+ && chmod 0600 $SSH_DIR/$AUTHORIZED_KEYS_FILE
 RUN mkdir /var/run/sshd && chmod 0755 /var/run/sshd
 
 RUN echo "KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1" >> /etc/ssh/sshd_config
