@@ -4,12 +4,10 @@ RUN apt-get update
 RUN apt-get install -y openssh-server rssh \
  && rm -f /etc/ssh/ssh_host_*
 
-RUN useradd --uid 1000 --no-create-home --shell /usr/bin/rssh data \
- && mkdir /home/data \
- && chown data: /home/data \
+RUN useradd --uid 1000 --shell /usr/bin/rssh data \
  && chmod 0700 /home/data
 
-ENV SSH_DIR	/tmp/.ssh
+ENV SSH_DIR	/home/data/.ssh
 ENV AUTHORIZED_KEYS_FILE authorized_keys
 RUN echo "AuthorizedKeysFile $SSH_DIR/$AUTHORIZED_KEYS_FILE" >>/etc/ssh/sshd_config \
  && mkdir -p $SSH_DIR \
